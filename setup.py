@@ -32,7 +32,7 @@ packages = ['selenium_driver_updater',
 
 setup(
   name='selenium_driver_updater',
-  version='6.0.3',
+  version='7.0.0',
   description='Download or update your Selenium driver binaries and their browsers automatically with this package',
   long_description=long_description,
   long_description_content_type='text/markdown',
@@ -48,6 +48,7 @@ setup(
         "console_scripts": [
             "selenium_driver_updater = selenium_driver_updater.consoleUpdater:ConsoleUpdater.install",
             "selenium-driver-updater = selenium_driver_updater.consoleUpdater:ConsoleUpdater.install",
+            "selupd = selenium_driver_updater.consoleUpdater:ConsoleUpdater.install",
         ],
     },
 )

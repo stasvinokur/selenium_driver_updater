@@ -77,7 +77,7 @@ class ChromeDriver(DriverBase):
                     message = 'Versions below 115 are not supported - aborting operation'
                     logger.error(message)
                     raise DriverVersionInvalidException(message)
-            except:
+            except Exception:
                 raise DriverVersionInvalidException('Invalid version was provided, please check it')
 
             driver_path = self._download_driver(version=self.version)
@@ -131,7 +131,7 @@ class ChromeDriver(DriverBase):
         """
         driver_path : str = ''
 
-        if self.check_driver_is_up_to_date and not self.system_name:
+        if not self.system_name:
 
             is_driver_up_to_date, current_version, latest_version = super()._compare_current_version_and_latest_version()
 
@@ -140,7 +140,7 @@ class ChromeDriver(DriverBase):
 
         driver_path = self._download_driver()
 
-        if self.check_driver_is_up_to_date and not self.system_name:
+        if not self.system_name:
 
             is_driver_up_to_date, current_version, latest_version = super()._compare_current_version_and_latest_version()
 
@@ -202,9 +202,7 @@ class ChromeDriver(DriverBase):
         latest_version : str = ''
         driver_path : str = ''
 
-        if self.upgrade:
-
-            super()._delete_current_driver_for_current_os()
+        super()._delete_current_driver_for_current_os()
 
         if version:
 
@@ -235,7 +233,7 @@ class ChromeDriver(DriverBase):
             if 'mac_arm64' in url:
                 try:
                     super()._check_if_version_is_valid(url=url)
-                except:
+                except Exception:
                     logger.warning('Could not find binary with mac_arm64 name, trying to check version using different name')
                     url = url.replace('mac_arm64', 'mac64_m1')
                     super()._check_if_version_is_valid(url=url)
@@ -276,8 +274,6 @@ class ChromeDriver(DriverBase):
 
         logger.info(f'Chromedriver was successfully unpacked by path: {driver_path}')
 
-        if self.chmod:
-
-            super()._chmod_driver()
+        super()._chmod_driver()
 
         return driver_path

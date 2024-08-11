@@ -1,3 +1,22 @@
+## [7.0.0] - xx/08/2024
+This version was written and tested on Python 3.11.1
+
+#### Added
+
+- Added new command assosiation "selupd" for easier use
+- Added automatic pypi release
+- Added deleting of .tmp files when downloading is manually stopped (KeyboardInterrupt)
+
+#### Improvements
+
+- Cosmetic changes to code
+- Improved tests by switching from unit-tests to pytest
+- Parameters chmod, upgrade, check_driver_is_up_to_date have been Deprecated. Now always defaults to True.
+
+#### Fixes
+
+- Fixed an issue with incorrect extracting of tar.gz archives when specific filename is present
+
 ## [6.0.3] - 07/03/2024
 This version was written and tested on Python 3.11.1
 

@@ -34,12 +34,6 @@ class DriverBase():
 
         self.path : str = str(kwargs.get('path'))
 
-        self.upgrade : bool = bool(kwargs.get('upgrade'))
-
-        self.chmod : bool = bool(kwargs.get('chmod'))
-
-        self.check_driver_is_up_to_date : bool = bool(kwargs.get('check_driver_is_up_to_date'))
-
         self.version = str(kwargs.get('version'))
 
         self.info_messages = bool(kwargs.get('info_messages'))
@@ -238,7 +232,7 @@ class DriverBase():
 
         json_data = self.requests_getter.get_result_by_request(url=url_test_valid)
 
-        if not version_valid in json_data or not driver_version:
+        if version_valid not in json_data or not driver_version:
             message = ('Wrong version or system_name was specified.'
                         f'version_valid: {version_valid} driver_version: {driver_version} url: {url}')
             raise DriverVersionInvalidException(message)

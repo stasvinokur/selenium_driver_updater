@@ -40,8 +40,8 @@ class testPhantomJS(unittest.TestCase):
 
         path : str = str(setting["Program"]["driversPath"])
 
-        parametres = dict(driver_name='phantomjs', path=path, upgrade=True, chmod=True, 
-        check_driver_is_up_to_date = True, info_messages=True, filename='phantomjs_test', version='')
+        parametres = dict(driver_name='phantomjs', path=path,
+        info_messages=True, filename='phantomjs_test', version='')
 
         cls.phantomjs = PhantomJS(**parametres)
 

@@ -148,7 +148,7 @@ class OperaBrowser():
 
             json_data = self.requests_getter.get_result_by_request(url=self.url_release)
 
-            if not self.system_name in json_data:
+            if self.system_name not in json_data:
                 continue
 
             else:

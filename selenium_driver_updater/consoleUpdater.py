@@ -44,33 +44,6 @@ class ConsoleUpdater():
         default='',
         )
         parser.add_argument(
-        "--upgrade",
-        "-upg",
-        action="store",
-        dest="upgrade",
-        metavar="BOOLEAN",
-        help="If true, it will overwrite existing driver in the folder",
-        default=False,
-        )
-        parser.add_argument(
-        "--chmod",
-        "-ch",
-        action="store",
-        dest="chmod",
-        metavar="BOOLEAN",
-        help="If true, it will make driver binary executable",
-        default=True,
-        )
-        parser.add_argument(
-        "--check_driver_is_up_to_date",
-        "-cdr",
-        action="store",
-        dest="check_driver_is_up_to_date",
-        metavar="BOOLEAN",
-        help="If true, it will check driver version before and after upgrade",
-        default=True,
-        )
-        parser.add_argument(
         "--info_messages",
         "-im",
         action="store",

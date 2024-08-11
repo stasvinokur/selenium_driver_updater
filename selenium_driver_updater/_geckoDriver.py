@@ -76,7 +76,7 @@ class GeckoDriver(DriverBase):
         """
         driver_path : str = ''
 
-        if self.check_driver_is_up_to_date and not self.system_name:
+        if not self.system_name:
 
             is_driver_up_to_date, current_version, latest_version = super()._compare_current_version_and_latest_version_github()
 
@@ -85,7 +85,7 @@ class GeckoDriver(DriverBase):
 
         driver_path = self._download_driver()
 
-        if self.check_driver_is_up_to_date and not self.system_name:
+        if not self.system_name:
 
             is_driver_up_to_date, current_version, latest_version = super()._compare_current_version_and_latest_version_github()
 
@@ -166,9 +166,7 @@ class GeckoDriver(DriverBase):
 
         driver_path : str = ''
 
-        if self.upgrade:
-
-            super()._delete_current_driver_for_current_os()
+        super()._delete_current_driver_for_current_os()
 
         if version:
 
@@ -232,9 +230,7 @@ class GeckoDriver(DriverBase):
 
         logger.info(f'Geckodriver was successfully unpacked by path: {driver_path}')
 
-        if self.chmod:
-
-            super()._chmod_driver()
+        super()._chmod_driver()
 
         return driver_path
         

@@ -35,7 +35,7 @@ class Extractor():
             for member in zip_ref.namelist():
                 # Check if the member is a file and its name matches any of the driver names
                 member_name = member.split('/')[-1]
-                if ('driver' in member_name or 'phantomjs' in member_name) and not 'license' in member_name.lower():
+                if ('driver' in member_name or 'phantomjs' in member_name) and 'license' not in member_name.lower():
                     member_extract = member
                     # Extract the member to the destination directory
                     zip_ref.extract(member_extract, out_path)
@@ -123,7 +123,7 @@ class Extractor():
 
         os.rename(old_path, new_path)
 
-        renamed_driver_path = out_path + filename_replace
+        renamed_driver_path = out_path + os.path.sep + filename_replace
         if Path(renamed_driver_path).exists():
             Path(renamed_driver_path).unlink()
 
@@ -238,7 +238,7 @@ class Extractor():
         for member in tar.getmembers():
             member_path = os.path.join(path, member.name)
             if not Extractor._is_within_directory(path, member_path):
-                raise Exception("Attempted Path Traversal in Tar File")
+                raise tarfile.ExtractError("Attempted Path Traversal in Tar File")
     
         tar.extractall(path, members, numeric_owner=numeric_owner) 
         

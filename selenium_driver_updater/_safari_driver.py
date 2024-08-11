@@ -73,7 +73,7 @@ class SafariDriver(DriverBase):
             if 'safari' in release.text.lower():
                 latest_version = release.text.lower().split('safari ')[1]
 
-                if not '.' in latest_version:
+                if '.' not in latest_version:
                     latest_version = str(float(latest_version))
                 break
 

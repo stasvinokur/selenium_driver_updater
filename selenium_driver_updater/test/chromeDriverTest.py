@@ -38,8 +38,8 @@ class testChromeDriver(unittest.TestCase):
 
         path : str = str(setting["Program"]["driversPath"])
 
-        parametres = dict(driver_name='chromedriver', path=path, upgrade=True, chmod=True,
-        check_driver_is_up_to_date = True, info_messages=True, filename='chromedriver_test', version='',
+        parametres = dict(driver_name='chromedriver', path=path,
+        info_messages=True, filename='chromedriver_test', version='',
         check_browser_is_up_to_date = False)
 
         cls.chrome_driver = ChromeDriver(**parametres)

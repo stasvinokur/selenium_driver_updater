@@ -15,6 +15,8 @@ from selenium_driver_updater.util.exceptions import StatusCodeNotEqualException,
 class GithubViewer():
     """Class for working with github repositories"""
 
+    API_RATE_LIMIT_MSG = 'API rate limit exceeded for'
+
     @staticmethod
     def get_release_version_by_repo_name(repo_name: str, index:int = 0) -> str:
         """Gets latest release asset by github repository name
@@ -43,7 +45,7 @@ class GithubViewer():
                 version = version.get('name')
 
         except StatusCodeNotEqualException as error:
-            if 'API rate limit exceeded for' in error.args[0]:
+            if GithubViewer.API_RATE_LIMIT_MSG in error.args[0]:
                 message = 'Github API rate limit exceeded for your IP, trying to get needed data via site.'
                 logger.warning(message)
 
@@ -74,7 +76,7 @@ class GithubViewer():
             json_data = RequestsGetter.get_result_by_request(url=url, is_json=True)
 
         except StatusCodeNotEqualException as error:
-            if 'API rate limit exceeded for' in error.args[0]:
+            if GithubViewer.API_RATE_LIMIT_MSG in error.args[0]:
                 message = 'Github API rate limit exceeded for your IP, could not get needed data.'
                 logger.warning(message)
                 raise GithubApiLimitException(message) from error
@@ -138,7 +140,7 @@ class GithubViewer():
             tag = find_string[0] if len(find_string) > 0 else ''
 
         except StatusCodeNotEqualException as error:
-            if 'API rate limit exceeded for' in error.args[0]:
+            if GithubViewer.API_RATE_LIMIT_MSG in error.args[0]:
                 message = 'Github API rate limit exceeded for your IP, could not get needed data.'
                 logger.warning(message)
 

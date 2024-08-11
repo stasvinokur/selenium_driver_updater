@@ -8,6 +8,7 @@ import time
 import sys
 import traceback
 from packaging import version
+import glob
 
 # Local imports
 
@@ -30,9 +31,6 @@ class _info():
     version = ''
     system_name: Any = ''
 
-    upgrade = False
-    chmod = True
-    check_driver_is_up_to_date = True
     info_messages = False
 
     check_browser_is_up_to_date = False
@@ -70,9 +68,6 @@ class DriverUpdater():
         Args:
             driver_name (Union[str, list[str]]) : Specified driver name/names which will be downloaded or updated. Like "DriverUpdater.chromedriver" or etc.
             path (str)                          : Specified path which will used for downloading or updating Selenium driver binary. Must be folder path.
-            upgrade (bool)                      : If true, it will overwrite existing driver in the folder. Defaults to False.
-            chmod (bool)                        : If true, it will make driver binary executable. Defaults to True.
-            check_driver_is_up_to_date (bool)   : If true, it will check driver version before and after upgrade. Defaults to True.
             info_messages (bool)                : If false, it will disable all info messages. Defaults to True.
             filename (str)                      : Specific name for driver. If given, it will replace current name for driver. Defaults to empty string.
             version (str)                       : Specific version for driver. If given, it will downloads given version. Defaults to empty string.
@@ -111,9 +106,6 @@ class DriverUpdater():
         _info.filename = str(kwargs.get('filename', '')).replace('.', '') if type(kwargs.get('filename', '')) not in [list, dict, tuple] else kwargs.get('filename', '')
 
         _info.enable_library_update_check = bool(kwargs.get('enable_library_update_check', True))
-        _info.upgrade = bool(kwargs.get('upgrade', False))
-        _info.chmod = bool(kwargs.get('chmod', True))
-        _info.check_driver_is_up_to_date = bool(kwargs.get('check_driver_is_up_to_date', True))
 
         _info.version = str(kwargs.get('version', '')) if type(kwargs.get('version', '')) not in [list, dict, tuple] else kwargs.get('version', '')
 
@@ -121,6 +113,9 @@ class DriverUpdater():
 
         _info.system_name = kwargs.get('system_name', '')
 
+        if any([kwargs.get('chmod') is not None,  kwargs.get('upgrade') is not None, kwargs.get('check_driver_is_up_to_date') is not None]):
+            logger.warning('You are using one of the parameters chmod, upgrade, check_driver_is_up_to_date which have been deprecated, please remove it from your code')
+            
         try:
 
             DriverUpdater.__check_enviroment_and_variables()
@@ -157,6 +152,16 @@ class DriverUpdater():
                     list_of_paths.append(driver_path)
 
                     driver_path = list_of_paths
+
+        except KeyboardInterrupt:
+            # Locating paths of .tmp files
+            tmp_files = glob.glob(os.path.join(_info.path, "*.tmp"))
+            
+            # Removing of .tmp files
+            for tmp_file in tmp_files:
+                try:
+                    os.remove(tmp_file)
+                except Exception: pass
 
         except Exception:
 
@@ -196,18 +201,11 @@ class DriverUpdater():
             if _info.version:
                 DriverUpdater.__check_parameter_type_is_valid(_info.version, type(_info.driver_name), 'version')
 
-            if isinstance(_info.driver_name, str):
-
-                if _info.system_name:
-
+            if _info.system_name:
+                if isinstance(_info.driver_name, str):
                     DriverUpdater.__check_system_name_is_valid(system_name=_info.system_name)
-
-            elif isinstance(_info.driver_name, list):
-
-                if _info.system_name:
-
+                elif isinstance(_info.driver_name, list):
                     for os_system in _info.system_name:
-
                         DriverUpdater.__check_system_name_is_valid(system_name=os_system)
 
         else:
@@ -306,8 +304,7 @@ class DriverUpdater():
         version = kwargs.get('version', _info.version)
         system_name = kwargs.get('system_name', _info.system_name)
 
-        parametres = dict(  driver_name=driver_name, path=_info.path, upgrade=_info.upgrade, chmod=_info.chmod,
-                            check_driver_is_up_to_date=_info.check_driver_is_up_to_date,
+        parametres = dict(  driver_name=driver_name, path=_info.path,
                             filename=filename, version=version,
                             check_browser_is_up_to_date=_info.check_browser_is_up_to_date,
                             info_messages=_info.info_messages,

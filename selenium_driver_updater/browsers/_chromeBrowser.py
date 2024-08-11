@@ -213,7 +213,7 @@ class ChromeBrowser():
             if stable_channel_header_text in news.text:
 
                 current_os = platform.system().replace('Darwin', 'Mac')
-                if not current_os.lower() in news.text.lower():
+                if current_os.lower() not in news.text.lower():
                     continue
 
                 latest_stable_version_element = news.text

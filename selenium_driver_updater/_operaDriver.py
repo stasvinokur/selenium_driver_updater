@@ -75,7 +75,7 @@ class OperaDriver(DriverBase):
         """
         driver_path : str = ''
 
-        if self.check_driver_is_up_to_date and not self.system_name:
+        if not self.system_name:
 
             is_driver_up_to_date, current_version, latest_version = super()._compare_current_version_and_latest_version_github()
 
@@ -84,7 +84,7 @@ class OperaDriver(DriverBase):
 
         driver_path = self._download_driver()
 
-        if self.check_driver_is_up_to_date and not self.system_name:
+        if not self.system_name:
 
             is_driver_up_to_date, current_version, latest_version = super()._compare_current_version_and_latest_version_github()
 
@@ -98,29 +98,6 @@ class OperaDriver(DriverBase):
                 driver_path = self._download_driver(previous_version=True)
 
         return driver_path
-
-    def __rename_driver(self, archive_folder_path : str, archive_operadriver_path : str) -> None:
-        """Renames operadriver if it was given
-
-        Args:
-            archive_folder_path (str)       : Path to the main folder
-            archive_operadriver_path (str)  : Path to the operadriver archive
-
-        """
-        renamed_driver_path : str = ''
-
-        new_path = archive_folder_path + os.path.sep + self.filename
-
-        if Path(new_path).exists():
-            Path(new_path).unlink()
-
-        os.rename(archive_operadriver_path, new_path)
-
-        renamed_driver_path = self.path + self.filename
-        if Path(renamed_driver_path).exists():
-            Path(renamed_driver_path).unlink()
-
-        copyfile(new_path, renamed_driver_path)
 
     def _get_latest_previous_version_operadriver_via_requests(self) -> str:
         """Gets previous latest operadriver version
@@ -188,9 +165,7 @@ class OperaDriver(DriverBase):
 
         driver_path : str = ''
 
-        if self.upgrade:
-
-            super()._delete_current_driver_for_current_os()
+        super()._delete_current_driver_for_current_os()
 
         if version:
 
@@ -260,9 +235,7 @@ class OperaDriver(DriverBase):
 
         logger.info(f'Operadriver was successfully unpacked by path: {driver_path}')
 
-        if self.chmod:
-
-            super()._chmod_driver()
+        super()._chmod_driver()
 
         return driver_path
         
