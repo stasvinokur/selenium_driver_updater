@@ -1,4 +1,3 @@
-#pylint: disable=logging-fstring-interpolation
 #Standart library imports
 import platform
 

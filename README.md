@@ -127,17 +127,6 @@ All supported OS's for this driver are:
 - MacOS with M1
 - Linux
 
-### ``PhantomJS`` 
-#### ``DriverUpdater.phantomjs``
-
-For installing or updating [phantomjs binary](https://phantomjs.org/)
-
-All supported OS's for this driver are:
-
-- Windows
-- MacOS
-- Linux
-
 ### ``SafariDriver`` 
 #### ``DriverUpdater.safaridriver``
 
@@ -147,37 +136,20 @@ All supported OS's for this driver are:
 
 - MacOS
 
-# Supported browsers for updates
+# Supported browsers for checking version
 
 ### ``Chrome Browser``
 
-For updating [chrome browser](https://www.google.com/chrome/)
-
-All supported OS's for this browser are:
-
-- MacOS
+For checking version [chrome browser](https://www.google.com/chrome/)
 
 ### ``Firefox Browser``
 
-For updating [firefox browser](https://www.mozilla.org/en-US/firefox/)
-
-All supported OS's for this browser are:
-
-- MacOS
+For checking version [firefox browser](https://www.mozilla.org/en-US/firefox/)
 
 ### ``Opera Browser``
 
-For updating [opera browser](https://www.opera.com)
-
-All supported OS's for this browser are:
-
-- Windows 32 / 64 / ARM
-- MacOS
+For checking version [opera browser](https://www.opera.com)
 
 ### ``Edge Browser``
 
-For updating [edge browser](https://www.microsoft.com/en-us/edge)
-
-All supported OS's for this browser are:
-
-- MacOS
+For checking version [edge browser](https://www.microsoft.com/en-us/edge)

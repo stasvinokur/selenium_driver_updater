@@ -1,9 +1,6 @@
-#pylint: disable=logging-fstring-interpolation
 #Standart library imports
 import shutil
-import os
 import time
-from shutil import copyfile
 from pathlib import Path
 import re
 

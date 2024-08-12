@@ -5,7 +5,6 @@ import argparse
 from selenium_driver_updater._setting import setting
 from selenium_driver_updater.driverUpdater import DriverUpdater
 
-#pylint: disable=protected-access
 class ConsoleUpdater():
     """Class for working with command line of selenium driver updater library"""
 
@@ -16,7 +15,7 @@ class ConsoleUpdater():
         description_text = (
         "Download or update your selenium driver binaries and their browsers automatically with this package.\n\n"
         "Available drivers are: (you can use them with -d or --driver_name command)\n"
-        "chromedriver, edgedriver, geckodriver, phantomjs, operadriver, safaridriver\r\n\r\n"
+        "chromedriver, edgedriver, geckodriver, operadriver, safaridriver\r\n\r\n"
         "Available OSes are: (you can use them with --system_name command)\n"
         "win64, win32, linux64, linux32, mac64, mac64_m1 (stands for mac with arm-based architecture), arm64"
         )
@@ -62,10 +61,10 @@ class ConsoleUpdater():
         default='',
         )
         parser.add_argument(
-        "--check_browser_is_up_to_date",
+        "--check_browser",
         "-cb",
         action="store",
-        dest="check_browser_is_up_to_date",
+        dest="check_browser",
         metavar="BOOLEAN",
         help="If true, it will check browser version before specific driver update or upgrade",
         default=False,

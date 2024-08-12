@@ -8,7 +8,7 @@ from requests.models import Response
 #Local imports
 from selenium_driver_updater.util.exceptions import StatusCodeNotEqualException
 
-class RequestsGetter(): # pylint: disable=too-few-public-methods
+class RequestsGetter():
     """Class for working with requests module"""
 
     user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) \

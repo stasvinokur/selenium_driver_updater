@@ -12,10 +12,19 @@ This version was written and tested on Python 3.11.1
 - Cosmetic changes to code
 - Improved tests by switching from unit-tests to pytest
 - Parameters chmod, upgrade, check_driver_is_up_to_date have been Deprecated. Now always defaults to True.
+- Parameter "check_browser_is_up_to_date" renamed to "check_browser" for easier use.
+- Made code easier to read, removed some complexity in the code
 
 #### Fixes
 
 - Fixed an issue with incorrect extracting of tar.gz archives when specific filename is present
+- Fixed an issue with incorrect extracting of chromedriver with third_party_notice file
+
+#### Removed
+
+- Removed support for PhantomJS
+- Removed downloading of browsers on MacOS. Only kept checking current and latest versions.
+- Removed Pylint comments everywhere, because of the use of sonarlint and sonarqube.
 
 ## [6.0.3] - 07/03/2024
 This version was written and tested on Python 3.11.1

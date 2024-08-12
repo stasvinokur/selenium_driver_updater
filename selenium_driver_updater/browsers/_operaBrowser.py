@@ -1,16 +1,12 @@
-#pylint: disable=logging-fstring-interpolation
 #Standart library imports
 import subprocess
-import os
 import re
 import platform
-from typing import Tuple,Any
+from typing import Any
 from pathlib import Path
-import shutil
 
 # Third party imports
 from bs4 import BeautifulSoup
-import wget
 
 # Selenium imports
 from selenium import webdriver
@@ -29,7 +25,7 @@ class OperaBrowser():
 
     def __init__(self, **kwargs):
         self.setting : Any = setting
-        self.check_browser_is_up_to_date = bool(kwargs.get('check_browser_is_up_to_date'))
+        self.check_browser = bool(kwargs.get('check_browser'))
 
         self.operadriver_path = str(kwargs.get('path'))
 
@@ -41,38 +37,8 @@ class OperaBrowser():
     def main(self) -> None:
         """Main function, checks for the latest version, downloads or updates opera browser"""
 
-        if self.check_browser_is_up_to_date:
-            self._check_if_opera_browser_is_up_to_date()
-
-    def _check_if_opera_browser_is_up_to_date(self) -> None:
-        """Сhecks for the latest version of opera browser
-
-        Raises:
-            Except: If unexpected error raised.
-
-        """
-
-        try:
-
-            if platform.system() not in ['Darwin', 'Windows']:
-                message = 'Opera browser checking/updating is currently disabled for your OS. Please wait for the new releases.'
-                logger.error(message)
-                return
-
-            is_browser_up_to_date, current_version, latest_version = self._compare_current_version_and_latest_version_opera_browser()
-
-            if not is_browser_up_to_date:
-
-                self._get_latest_opera_browser_for_current_os()
-
-                is_browser_up_to_date, current_version, latest_version = self._compare_current_version_and_latest_version_opera_browser()
-
-                if not is_browser_up_to_date:
-                    message = f'Problem with updating opera browser current_version: {current_version} latest_version: {latest_version}'
-                    logger.info(message)
-
-        except (ValueError, FileNotFoundError):
-            pass
+        if self.check_browser:
+            self._compare_opera_browser_versions()
 
     def _get_current_version_opera_browser_selenium(self) -> str:
         """Gets current opera browser version
@@ -160,82 +126,7 @@ class OperaBrowser():
 
         return latest_version
 
-    def _get_latest_opera_browser_for_current_os(self) -> None:
-        """Trying to update opera browser to its latest version"""
-
-        if platform.system() not in ['Darwin', 'Windows']:
-            message = 'Opera browser checking/updating is currently disabled for your OS. Please wait for the new releases.'
-            logger.error(message)
-            return
-
-        latest_version = self._get_latest_version_opera_browser()
-
-        url_full_release = self.url_release + self.system_name
-        if platform.system() == 'Darwin':
-            if 'arm' in str(os.uname().machine) and platform.system() == 'Darwin':
-
-                url_full_release = url_full_release + f'Opera_{latest_version}_Autoupdate_arm64.tar.xz'
-
-            else:
-                url_full_release = url_full_release + f'Opera_{latest_version}_Autoupdate.tar.xz'
-
-        elif platform.system() == 'Windows':
-            if self.setting['Program']['OSBitness'] == '64':
-
-                url_full_release = url_full_release + f'Opera_{latest_version}_Setup_x64.exe'
-
-            else:
-
-                url_full_release = url_full_release + f'Opera_{latest_version}_Setup.exe'
-
-        logger.info(f'Started download operabrowser by url: {url_full_release}')
-
-        path = self.operadriver_path.replace(self.operadriver_path.split(os.path.sep)[-1], '') + 'selenium-driver-updater' + os.path.sep
-        archive_name = url_full_release.split('/')[-1]
-
-        if not Path(path).exists():
-            Path(path).mkdir()
-
-        if Path(path + archive_name).exists():
-            Path(path + archive_name).unlink()
-
-        logger.info(f'Started to download opera browser by url: {url_full_release}')
-        archive_path = wget.download(url=url_full_release, out=path + archive_name)
-
-        logger.info(f'Opera browser was downloaded to path: {archive_path}')
-
-        if platform.system() == 'Darwin':
-
-            logger.info('Trying to kill all opera processes')
-            subprocess.Popen('killall Opera', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            subprocess.Popen('killall Opera', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            logger.info('Successfully killed all opera processes')
-
-            self.extractor.extract_all_tar_xz_archive(archive_path=archive_path, delete_archive=True, out_path=path)
-
-            opera_browser_path = path + 'Opera.app'
-            opera_browser_path_application = '/Applications/Opera.app'
-
-            if Path(opera_browser_path_application).exists():
-                shutil.rmtree(opera_browser_path_application)
-            shutil.move(opera_browser_path, opera_browser_path_application)
-
-            logger.info(f'Successfully moved opera browser from: {opera_browser_path} to: {opera_browser_path_application}')
-
-            if Path(archive_path).exists():
-                Path(archive_path).unlink()
-
-        elif platform.system() == 'Windows':
-
-            logger.info('Trying to kill all opera.exe processes')
-            subprocess.Popen('taskkill /F /IM "opera.exe" /T', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            logger.info('Successfully killed all opera.exe processes')
-
-            logger.info('Trying to install new opera browser')
-            os.system(f'{archive_path} /install /silent /launchopera=no /desktopshortcut=no /pintotaskbar=no /setdefaultbrowser=0')
-            logger.info('Successfully updated current opera browser')
-
-    def _compare_current_version_and_latest_version_opera_browser(self) -> Tuple[bool, str, str]:
+    def _compare_opera_browser_versions(self):
         """Compares current version of opera browser to latest version
 
         Returns:
@@ -250,23 +141,22 @@ class OperaBrowser():
 
         """
 
-        is_browser_up_to_date : bool = False
         current_version : str = ''
         latest_version : str = ''
 
         current_version = self._get_current_version_opera_browser_selenium()
 
         if not current_version:
-            return is_browser_up_to_date, current_version, latest_version
+            return
 
         latest_version = self._get_latest_version_opera_browser()
 
         if current_version == latest_version:
-            is_browser_up_to_date = True
             message = f"Your existing opera browser is up to date. current_version: {current_version} latest_version: {latest_version}"
             logger.info(message)
-
-        return is_browser_up_to_date, current_version, latest_version
+        else:
+            message = f"Your existing opera browser is outdated. current_version: {current_version} latest_version: {latest_version}"
+            logger.warning(message)
 
     def _get_current_version_opera_browser_selenium_via_terminal(self) -> str:
         """Gets current opera browser version via command in terminal

@@ -16,7 +16,6 @@ from selenium_driver_updater.util.github_viewer import GithubViewer
 from selenium_driver_updater.util.logger import logger
 from selenium_driver_updater.util.exceptions import DriverVersionInvalidException
 
-#pylint: disable=logging-fstring-interpolation
 class DriverBase():
     "Base class for all drivers classes in selenium_driver_updater"
 
@@ -100,7 +99,7 @@ class DriverBase():
     def _chmod_driver(self) -> None:
         """Tries to give specific driver needed permissions"""
 
-        if Path(self.driver_path).exists():
+        if Path(self.driver_path).exists() and os.name == 'posix':
 
             logger.info(f'Trying to give {self.driver_name} needed permissions')
 

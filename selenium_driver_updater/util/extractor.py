@@ -35,7 +35,7 @@ class Extractor():
             for member in zip_ref.namelist():
                 # Check if the member is a file and its name matches any of the driver names
                 member_name = member.split('/')[-1]
-                if ('driver' in member_name or 'phantomjs' in member_name) and 'license' not in member_name.lower():
+                if 'driver' in member_name and '.chromedriver' not in member_name.lower():
                     member_extract = member
                     # Extract the member to the destination directory
                     zip_ref.extract(member_extract, out_path)
@@ -123,7 +123,7 @@ class Extractor():
 
         os.rename(old_path, new_path)
 
-        renamed_driver_path = out_path + os.path.sep + filename_replace
+        renamed_driver_path = out_path + filename_replace
         if Path(renamed_driver_path).exists():
             Path(renamed_driver_path).unlink()
 
@@ -131,24 +131,6 @@ class Extractor():
 
         if Path(driver_folder_path).exists():
             shutil.rmtree(driver_folder_path)
-
-    @staticmethod
-    def extract_all_tar_bz2_archive(archive_path: str,
-                                    out_path: str, delete_archive: bool = True) -> None:
-        """Extract all members in specific tar.bz2 archive
-
-        Args:
-            archive_path (str)      : Path to specific archive.
-            out_path (str)          : Out path, where all members of archive will be gathered.
-            delete_archive (bool)   : Delete archive after unzip or not. Defaults to True.
-
-        """
-
-        with tarfile.open(archive_path, "r:bz2") as tar_ref:
-            Extractor._safe_extract(tar_ref, out_path)
-
-        if Path(archive_path).exists() and delete_archive:
-            Path(archive_path).unlink()
 
     @staticmethod
     def extract_all_tar_xz_archive(archive_path: str,
@@ -193,10 +175,6 @@ class Extractor():
         elif archive_path.endswith('.tar.gz'):
 
             Extractor.extract_all_tar_gz_archive(**parameters)
-
-        elif archive_path.endswith('.tar.bz2'):
-
-            Extractor.extract_all_tar_bz2_archive(**parameters)
 
         else:
             message = f'Unknown archive format was specified archive_path: {archive_path}'

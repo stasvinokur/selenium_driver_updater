@@ -1,4 +1,3 @@
-#pylint: disable=logging-fstring-interpolation, protected-access, broad-except
 #Standart library imports
 from dataclasses import dataclass
 from pathlib import Path
@@ -33,7 +32,7 @@ class _info():
 
     info_messages = False
 
-    check_browser_is_up_to_date = False
+    check_browser = False
     enable_library_update_check = True
 
 class DriverUpdater():
@@ -44,7 +43,6 @@ class DriverUpdater():
     geckodriver = 'geckodriver'
     operadriver = 'operadriver'
     edgedriver = 'edgedriver'
-    phantomjs = 'phantomjs'
     safaridriver = 'safaridriver'
 
     #OS'S
@@ -71,7 +69,7 @@ class DriverUpdater():
             info_messages (bool)                : If false, it will disable all info messages. Defaults to True.
             filename (str)                      : Specific name for driver. If given, it will replace current name for driver. Defaults to empty string.
             version (str)                       : Specific version for driver. If given, it will downloads given version. Defaults to empty string.
-            check_browser_is_up_to_date (bool)  : If true, it will check browser version before specific driver update or upgrade. Defaults to False.
+            check_browser (bool)                : If true, it will check browser version before specific driver update or upgrade. Defaults to False.
             enable_library_update_check (bool)  : If true, it will enable checking for library update while starting. Defaults to True.
             system_name (Union[str, list[str]]) : Specific OS for driver. Defaults to empty string.
 
@@ -81,136 +79,170 @@ class DriverUpdater():
             driver_path (str)       : Path where Selenium driver binary was downloaded or updated.
 
         """
+        
+        _info.info_messages = bool(kwargs.get('info_messages', True))
+        DriverUpdater.__set_logging_level()
+        DriverUpdater.__initialize_info(driver_name, **kwargs)
 
-        #Initialize all variables
-        message_run:str = ''
-
-        driver_path = ''
+        try:
+            DriverUpdater.__check_enviroment_and_variables()
+            return DriverUpdater.__process_drivers()
+        except KeyboardInterrupt:
+            DriverUpdater.__cleanup_tmp_files()
+        except Exception:
+            logger.error(f'error: {str(traceback.format_exc())}')
+            return ''
+    
+    @staticmethod
+    def __initialize_info(driver_name, **kwargs):
+        """Initialize the _info dataclass with provided parameters."""
+        
+        if any([kwargs.get('chmod') is not None,  kwargs.get('upgrade') is not None, kwargs.get('check_driver_is_up_to_date') is not None]):
+            logger.warning('You are using one of the parameters chmod, upgrade, check_driver_is_up_to_date which have been deprecated, please remove it from your code')
+        elif kwargs.get('check_browser_is_up_to_date'):
+            logger.warning('Parameter check_browser_is_up_to_date is now check_browser, please rename it in your code')
 
         _info.driver_name = driver_name
+        _info.path = DriverUpdater.__get_path(kwargs.get('path'))
+        _info.filename = DriverUpdater.__sanitize_filename(kwargs.get('filename'))
+        _info.enable_library_update_check = bool(kwargs.get('enable_library_update_check', True))
+        _info.version = DriverUpdater.__sanitize_version(kwargs.get('version'))
+        _info.check_browser = bool(kwargs.get('check_browser', False))
+        _info.system_name = kwargs.get('system_name', '')
 
-        _info.info_messages = bool(kwargs.get('info_messages', True))
+    @staticmethod
+    def __get_path(path):
+        if not path:
+            path = os.getcwd()
+            logger.info('You have not specified the path - so used default folder path instead')
+        return str(os.path.abspath(path) + os.path.sep)
 
+    @staticmethod
+    def __sanitize_filename(filename):
+        if isinstance(filename, (list, dict, tuple)):
+            return filename
+        return str(filename or '').replace('.', '')
+
+    @staticmethod
+    def __sanitize_version(version):
+        if isinstance(version, (list, dict, tuple)):
+            return version
+        return str(version or '')
+
+    @staticmethod
+    def __set_logging_level():
         if _info.info_messages:
             logger.setLevel(levels['info'])
         else:
             logger.setLevel(levels['error'])
 
-        path = kwargs.get('path')
-        if not path:
-            path = os.getcwd()
-            logger.info('You have not specified the path - so used default folder path instead')
+    @staticmethod
+    def __process_drivers():
+        """Process the driver installation or update based on provided driver_name."""
+        if isinstance(_info.driver_name, str):
+            return DriverUpdater.__run_specific_driver()
+        elif isinstance(_info.driver_name, list):
+            return DriverUpdater.__process_multiple_drivers()
 
-        _info.path = str(os.path.abspath(path) + os.path.sep)
+    @staticmethod
+    def __process_multiple_drivers():
+        """Process installation or update for multiple drivers."""
+        list_of_paths = []
+        for i, driver in enumerate(_info.driver_name):
+            time.sleep(1)  # small sleep
+            driver_path = DriverUpdater.__run_specific_driver(
+                driver_name=driver,
+                filename=DriverUpdater.__get_item_or_default(_info.filename, i),
+                system_name=DriverUpdater.__get_item_or_default(_info.system_name, i),
+                version=DriverUpdater.__get_item_or_default(_info.version, i),
+                index=i
+            )
+            list_of_paths.append(driver_path)
+        return list_of_paths
 
-        _info.filename = str(kwargs.get('filename', '')).replace('.', '') if type(kwargs.get('filename', '')) not in [list, dict, tuple] else kwargs.get('filename', '')
-
-        _info.enable_library_update_check = bool(kwargs.get('enable_library_update_check', True))
-
-        _info.version = str(kwargs.get('version', '')) if type(kwargs.get('version', '')) not in [list, dict, tuple] else kwargs.get('version', '')
-
-        _info.check_browser_is_up_to_date = bool(kwargs.get('check_browser_is_up_to_date', False))
-
-        _info.system_name = kwargs.get('system_name', '')
-
-        if any([kwargs.get('chmod') is not None,  kwargs.get('upgrade') is not None, kwargs.get('check_driver_is_up_to_date') is not None]):
-            logger.warning('You are using one of the parameters chmod, upgrade, check_driver_is_up_to_date which have been deprecated, please remove it from your code')
-            
+    @staticmethod
+    def __get_item_or_default(lst, index, default=''):
         try:
+            return str(lst[index]).replace('.', '')
+        except IndexError:
+            return default
 
-            DriverUpdater.__check_enviroment_and_variables()
-
-            if isinstance(_info.driver_name, str):
-
-                driver_path = DriverUpdater.__run_specific_driver()
-
-            elif isinstance(_info.driver_name, list):
-
-                list_of_paths : list[str] = []
-
-                for i, driver in enumerate(_info.driver_name):
-
-                    time.sleep(1) #small sleep
-
-                    try:
-                        filename_driver = str(_info.filename[i])
-                        filename_driver = filename_driver.replace('.', '')
-                    except IndexError:
-                        filename_driver = ''
-
-                    try:
-                        system_name_driver = str(_info.system_name[i])
-                    except IndexError:
-                        system_name_driver = ''
-
-                    try:
-                        version_driver = str(_info.version[i])
-                    except IndexError:
-                        version_driver = ''
-
-                    driver_path = DriverUpdater.__run_specific_driver(driver_name=driver, filename=filename_driver, system_name=system_name_driver, version=version_driver, index=i)
-                    list_of_paths.append(driver_path)
-
-                    driver_path = list_of_paths
-
-        except KeyboardInterrupt:
-            # Locating paths of .tmp files
-            tmp_files = glob.glob(os.path.join(_info.path, "*.tmp"))
-            
-            # Removing of .tmp files
-            for tmp_file in tmp_files:
-                try:
-                    os.remove(tmp_file)
-                except Exception: pass
-
-        except Exception:
-
-            message_run = f'error: {str(traceback.format_exc())}'
-            logger.error(message_run)
-
-        return driver_path
+    @staticmethod
+    def __cleanup_tmp_files():
+        """Locate and remove any .tmp files left over after an interruption."""
+        tmp_files = glob.glob(os.path.join(_info.path, "*.tmp"))
+        for tmp_file in tmp_files:
+            try:
+                os.remove(tmp_file)
+            except Exception:
+                pass
 
     @staticmethod
     def __check_all_input_parameteres() -> None:
         """Private function for checking all input parameters"""
+        DriverUpdater.__check_path_validity()
+        DriverUpdater.__check_driver_name_type()
+        DriverUpdater.__check_filename_type()
+        DriverUpdater.__check_system_name_type()
+        DriverUpdater.__check_version_type()
+        DriverUpdater.__validate_system_names()
 
-
+    @staticmethod
+    def __check_path_validity() -> None:
         if not Path(_info.path).exists() and _info.path.endswith(os.path.sep):
-            message = f"The specified path does not exist current path is: {_info.path}, trying to create this directory"
+            message = f"The specified path does not exist. Current path is: {_info.path}. Trying to create this directory."
             logger.error(message)
             Path(_info.path).mkdir()
             logger.info(f'Successfully created new directory at path: {_info.path}')
 
         if not Path(_info.path).is_dir():
-            message = f"The specified path is not a directory current path is: {_info.path}"
+            message = f"The specified path is not a directory. Current path is: {_info.path}"
             raise NotADirectoryError(message)
 
-        if isinstance(_info.driver_name,(list, str)):
+    @staticmethod
+    def __check_driver_name_type() -> None:
+        if not isinstance(_info.driver_name, (list, str)):
+            message = f'The type of "driver_name" must be a list or str. Current type is: {type(_info.driver_name)}'
+            raise ValueError(message)
 
-            if _info.filename:
+    @staticmethod
+    def __check_filename_type() -> None:
+        if _info.filename:
+            if isinstance(_info.driver_name, list) and isinstance(_info.filename, str):
+                _info.filename = [_info.filename]
+            DriverUpdater.__check_parameter_type_is_valid(_info.filename, type(_info.driver_name), 'filename')
 
-                if isinstance(_info.driver_name,list) and isinstance(_info.filename, str):
-                    _info.filename = [_info.filename]
+    @staticmethod
+    def __check_system_name_type() -> None:
+        if _info.system_name:
+            DriverUpdater.__check_parameter_type_is_valid(_info.system_name, type(_info.driver_name), 'system_name')
 
-                DriverUpdater.__check_parameter_type_is_valid(_info.filename, type(_info.driver_name), 'filename')
+    @staticmethod
+    def __check_version_type() -> None:
+        if _info.version:
+            DriverUpdater.__check_parameter_type_is_valid(_info.version, type(_info.driver_name), 'version')
 
-            if _info.system_name:
+    @staticmethod
+    def __validate_system_names() -> None:
+        if _info.system_name:
+            if isinstance(_info.driver_name, str):
+                DriverUpdater.__check_system_name_is_valid(system_name=_info.system_name)
+            elif isinstance(_info.driver_name, list):
+                for os_system in _info.system_name:
+                    DriverUpdater.__check_system_name_is_valid(system_name=os_system)
 
-                DriverUpdater.__check_parameter_type_is_valid(_info.system_name, type(_info.driver_name), 'system_name')
+    @staticmethod
+    def __check_parameter_type_is_valid(parameter, needed_type, parameter_name) -> None:
+        if not isinstance(parameter, needed_type):
+            message = f'The type of {parameter_name} must be a {needed_type}. Current type is: {type(parameter)}'
+            raise TypeError(message)
 
-            if _info.version:
-                DriverUpdater.__check_parameter_type_is_valid(_info.version, type(_info.driver_name), 'version')
-
-            if _info.system_name:
-                if isinstance(_info.driver_name, str):
-                    DriverUpdater.__check_system_name_is_valid(system_name=_info.system_name)
-                elif isinstance(_info.driver_name, list):
-                    for os_system in _info.system_name:
-                        DriverUpdater.__check_system_name_is_valid(system_name=os_system)
-
-        else:
-
-            message = f'The type of "driver_name" must be a list or str current type is: {type(_info.driver_name)}'
+    @staticmethod
+    def __check_system_name_is_valid(system_name) -> None:
+        """Private function for checking if the specified system_name exists and is valid"""
+        system_name_check = system_name in [DriverUpdater.__dict__[item] for item in DriverUpdater.__dict__]
+        if not system_name_check:
+            message = f'Unknown system name was specified. Current system_name is: {system_name}'
             raise ValueError(message)
 
 
@@ -281,54 +313,54 @@ class DriverUpdater():
 
     @staticmethod
     def __run_specific_driver(**kwargs) -> str:
-        """Private function for run download or update for specific driver
+        """Private function for running download or update for a specific driver."""
 
-        Args:
-            driver_name (Union[str, list[str]]) : Specified driver name/names which will be downloaded or updated. Like "DriverUpdater.chromedriver" or etc.
-            filename (str)                      : Specific name for chromedriver. If given, it will replace name for chromedriver. Defaults to empty string.
-            version (str)                       : Specific version for chromedriver. If given, it will downloads given version. Defaults to empty string.
-            system_name (Union[str, list[str]]) : Specific OS for driver. Defaults to empty string.
+        driver_name, filename, version, system_name = DriverUpdater.__extract_parameters(kwargs)
+        DriverUpdater.__set_driver_file_format(system_name, kwargs.get('index', None))
 
-        Returns:
-            str
+        try:
+            driver = ALL_DRIVERS[driver_name](**DriverUpdater.__create_parameters(driver_name, filename, version, system_name))
+        except KeyError:
+            DriverUpdater.__handle_invalid_driver_name(driver_name, kwargs.get('index', None))
 
-            driver_path (str) : Path where specific driver located
+        driver_path = driver.main()
+        return driver_path
 
-        """
-
-        driver_path: str = ''
-        index:str = ''
-
+    @staticmethod
+    def __extract_parameters(kwargs):
         driver_name = kwargs.get('driver_name', _info.driver_name)
         filename = kwargs.get('filename', _info.filename)
         version = kwargs.get('version', _info.version)
         system_name = kwargs.get('system_name', _info.system_name)
+        return driver_name, filename, version, system_name
 
-        parametres = dict(  driver_name=driver_name, path=_info.path,
-                            filename=filename, version=version,
-                            check_browser_is_up_to_date=_info.check_browser_is_up_to_date,
-                            info_messages=_info.info_messages,
-                            system_name=system_name )
-
+    @staticmethod
+    def __set_driver_file_format(system_name, index=None):
         if _info.system_name:
-            index = kwargs.get('index', None)
             if index is not None:
                 setting['Program']['DriversFileFormat'] = '.exe' if 'win' in _info.system_name[index] or 'arm' in _info.system_name[index] else ''
             else:
                 setting['Program']['DriversFileFormat'] = '.exe' if 'win' in _info.system_name or 'arm' in _info.system_name else ''
-        try:
-            driver = ALL_DRIVERS[driver_name](**parametres)
-        except KeyError:
-            index = kwargs.get('index', None)
-            if index:
-                message = f'Unknown driver name at index: {index} was specified current driver_name is: {driver_name}'
-            else:
-                message = f'Unknown driver name was specified current driver_name is: {driver_name}'
-            raise NameError(message)
 
-        driver_path = driver.main()
+    @staticmethod
+    def __create_parameters(driver_name, filename, version, system_name):
+        return dict(
+            driver_name=driver_name,
+            path=_info.path,
+            filename=filename,
+            version=version,
+            check_browser=_info.check_browser,
+            info_messages=_info.info_messages,
+            system_name=system_name
+        )
 
-        return driver_path
+    @staticmethod
+    def __handle_invalid_driver_name(driver_name, index=None):
+        if index:
+            message = f'Unknown driver name at index: {index} was specified. Current driver_name is: {driver_name}'
+        else:
+            message = f'Unknown driver name was specified. Current driver_name is: {driver_name}'
+        raise NameError(message)
 
     @staticmethod
     def __check_system_name_is_valid(system_name) -> None:

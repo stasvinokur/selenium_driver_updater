@@ -14,14 +14,12 @@ def setup_paths():
     out_path = os.path.join(base_dir, 'archive')
     zip_archive_path = os.path.join(out_path, 'geckodriver-v0.29.0-win64.zip')
     tar_archive_path = os.path.join(out_path, 'geckodriver-v0.29.1-macos-aarch64.tar.gz')
-    tar_bz2_archive_path = os.path.join(out_path, 'phantomjs-2.1.1-linux-x86_64.tar.bz2')
     tar_xz_archive_path = os.path.join(out_path, 'Opera_78.0.4093.112_Autoupdate_arm64.tar.xz')
 
     return {
         "out_path": out_path,
         "zip_archive_path": zip_archive_path,
         "tar_archive_path": tar_archive_path,
-        "tar_bz2_archive_path": tar_bz2_archive_path,
         "tar_xz_archive_path": tar_xz_archive_path
     }
 
@@ -128,18 +126,6 @@ def test_extract_all_tar_archive_with_specific_name(setup_paths):
     assert Path(geckodriver_path).exists(), f"Expected file not found: {geckodriver_path}"
     Path(geckodriver_path).unlink()
     assert not Path(geckodriver_path).exists()
-
-def test_extract_all_tar_bz2_archive(setup_paths):
-    Extractor.extract_all_tar_bz2_archive(
-        archive_path=setup_paths["tar_bz2_archive_path"],
-        out_path=setup_paths["out_path"],
-        delete_archive=False
-    )
-
-    phantom_path = os.path.join(setup_paths["out_path"], 'phantomjs-2.1.1-linux-x86_64')
-    assert Path(phantom_path).exists()
-    shutil.rmtree(phantom_path)
-    assert not Path(phantom_path).exists()
 
 def test_extract_all_tar_xz_archive(setup_paths):
     Extractor.extract_all_tar_xz_archive(

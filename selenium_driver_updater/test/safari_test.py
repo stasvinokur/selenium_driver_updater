@@ -15,7 +15,7 @@ def safari_driver():
         path=path,
         info_messages=True,
         version='',
-        check_browser_is_up_to_date=False
+        check_browser=False
     )
     return SafariDriver(**params)
 
@@ -27,7 +27,7 @@ def safari_driver_failure():
         path='failure',
         info_messages=True,
         version='blablabla',
-        check_browser_is_up_to_date=False
+        check_browser=False
     )
     return SafariDriver(**params)
 
