@@ -59,8 +59,7 @@ def test_download_driver_failure(gecko_driver_setup):
     """Test downloading driver with failure."""
     _, gecko_driver_failure = gecko_driver_setup
     with pytest.raises(DriverVersionInvalidException):
-        file_name = gecko_driver_failure._download_driver(version='blablablanotversion')
-        assert len(file_name) == 0
+        gecko_driver_failure._download_driver(version='blablablanotversion')
 
 def test_compare_current_version_and_latest_version_failure(gecko_driver_setup):
     """Test comparing current and latest versions with failure."""
@@ -74,8 +73,7 @@ def test_geckodriver_is_up_to_date_failure(gecko_driver_setup):
     """Test if GeckoDriver is up to date with failure."""
     _, gecko_driver_failure = gecko_driver_setup
     with pytest.raises(DriverVersionInvalidException):
-        filename = gecko_driver_failure.main()
-        assert len(filename) == 0
+        gecko_driver_failure.main()
 
 def test_if_version_is_valid_failure(gecko_driver_setup):
     """Test if a specific version is valid with failure."""

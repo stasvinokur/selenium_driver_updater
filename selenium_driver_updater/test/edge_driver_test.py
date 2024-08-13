@@ -56,17 +56,13 @@ def test_check_download_driver_failure(setup_edgedriver):
 def test_compare_current_version_and_latest_version_failure(setup_edgedriver):
     _, edgedriver_failure, _ = setup_edgedriver
     with pytest.raises(DriverVersionInvalidException):
-        is_driver_up_to_date, current_version, latest_version = edgedriver_failure._compare_current_version_and_latest_version()
-        assert not is_driver_is_up_to_date
-        assert len(current_version) == 0
-        assert len(latest_version) == 0
+        edgedriver_failure._compare_current_version_and_latest_version()
 
 
 def test_check_if_edgedriver_is_up_to_date_failure(setup_edgedriver):
     _, edgedriver_failure, _ = setup_edgedriver
     with pytest.raises(DriverVersionInvalidException):
-        filename = edgedriver_failure.main()
-        assert len(filename) == 0
+        edgedriver_failure.main()
 
 
 def test_check_if_version_is_valid_failure(setup_edgedriver):
@@ -79,7 +75,7 @@ def test_check_get_result_by_request(setup_edgedriver):
     _, _, setting_local = setup_edgedriver
     url = str(setting_local["EdgeDriver"]["LinkLastRelease"])
     json_data = RequestsGetter.get_result_by_request(url=url)
-    assert len(json_data) >= 0
+    assert len(json_data) > 0
 
 
 def test_check_download_driver_specific_version(setup_edgedriver):

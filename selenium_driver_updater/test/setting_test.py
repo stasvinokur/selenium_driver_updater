@@ -70,7 +70,7 @@ browser_paths = {
         'opera': r'reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall" /f Opera',
     },
     'Linux': {
-        'chrome': 'google-chrome-stable',
+        'chrome': ['google-chrome-stable'],
         'firefox': 'firefox',
         'opera': 'opera',
     }

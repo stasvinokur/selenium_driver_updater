@@ -112,19 +112,7 @@ class FirefoxBrowser():
 
 
     def _compare_firefox_browser_versions(self):
-        """Compares current version of firefox browser to latest version
-
-        Returns:
-            Tuple of bool, str and str
-
-            is_browser_up_to_date (bool)    : It true the browser is up to date. Defaults to False.
-            current_version (str)           : Current version of the browser.
-            latest_version (str)            : Latest version of the browser.
-
-        Raises:
-            Except: If unexpected error raised.
-
-        """
+        """Compares current version of firefox browser to latest version"""
         current_version : str = ''
         latest_version : str = ''
 

@@ -38,16 +38,7 @@ class ChromeBrowser():
             self._compare_chrome_browser_versions()
 
     def _compare_chrome_browser_versions(self):
-        """Compares current version of chrome browser to latest version
-
-        Returns:
-            Tuple of bool, str and str
-
-            is_browser_up_to_date (bool)    : It true the browser is up to date. Defaults to False.
-            current_version (str)           : Current version of the browser.
-            latest_version (str)            : Latest version of the browser.
-
-        """
+        """Compares current version of chrome browser to latest version"""
         current_version : str = ''
         latest_version : str = ''
 
@@ -108,55 +99,67 @@ class ChromeBrowser():
 
         return browser_version
 
-    def _get_current_version_chrome_browser_selenium_via_terminal(self) -> str:
-        """Gets current chrome browser version via command in terminal
-
-
-        Returns:
-            str
-
-            browser_version (str)   : Current chrome browser version.
-
-        """
-
-        browser_version : str = ''
-        browser_version_terminal : str = ''
-
-        chromebrowser_path = self.setting["ChromeBrowser"]["Path"]
-        if chromebrowser_path:
-
-            logger.info('Trying to get current version of chrome browser via terminal')
-
-            if platform.system() == 'Windows':
-
-                for command in chromebrowser_path:
-
-                    with subprocess.Popen(command, stdout=subprocess.PIPE) as process:
-                        browser_version_terminal = process.communicate()[0].decode('UTF-8')
-
-                    if 'invalid' not in browser_version_terminal.lower():
-                        break
-
-            elif platform.system() == 'Linux':
-
-                with subprocess.Popen([chromebrowser_path, '--version'], stdout=subprocess.PIPE) as process:
-                    browser_version_terminal = process.communicate()[0].decode('UTF-8')
-
-            elif platform.system() == 'Darwin':
-
-                for path in chromebrowser_path:
-
-                    with subprocess.Popen([path, '--version'], stdout=subprocess.PIPE) as process:
-                        browser_version_terminal = process.communicate()[0].decode('UTF-8')
-
-                    if 'no such file or directory' not in browser_version_terminal.lower():
-                        break
-
-
-            find_string = re.findall(self.setting["Program"]["wedriverVersionPattern"], browser_version_terminal)
-            browser_version = find_string[0] if len(find_string) > 0 else ''
-
+    def _get_current_version_chrome_browser_selenium(self) -> str:
+        """Gets current chrome browser version"""
+        browser_version = ''
+        try:
+            browser_version = self._get_current_version_chrome_browser_selenium_via_terminal()
+            if not browser_version:
+                logger.info('Trying to get current version of chrome browser via chromedriver')
+            if Path(self.chromedriver_path).exists() and not browser_version:
+                browser_version = self._get_version_via_chromedriver()
+            logger.info(f'Current version of chrome browser: {browser_version}')
+        except (WebDriverException, SessionNotCreatedException, OSError):
+            pass  # [Errno 86] Bad CPU type in executable:
         return browser_version
+
+    def _get_version_via_chromedriver(self) -> str:
+        """Get Chrome version via chromedriver"""
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument('--headless')
+        with webdriver.Chrome(executable_path=self.chromedriver_path, options=chrome_options) as driver:
+            return str(driver.capabilities['browserVersion'])
+
+    def _get_current_version_chrome_browser_selenium_via_terminal(self) -> str:
+        """Gets current chrome browser version via command in terminal"""
+        chromebrowser_path = self.setting["ChromeBrowser"]["Path"]
+        if not chromebrowser_path:
+            return ''
+
+        logger.info('Trying to get current version of chrome browser via terminal')
+        browser_version_terminal = self._run_version_command(chromebrowser_path)
+
+        return self._extract_browser_version(browser_version_terminal)
+
+    def _run_version_command(self, chromebrowser_path: str) -> str:
+        """Runs the command to get the browser version"""
+        if platform.system() == 'Windows':
+            return self._run_command_on_windows(chromebrowser_path)
+        elif platform.system() == 'Linux':
+            return self._run_command_on_unix(chromebrowser_path)
+        elif platform.system() == 'Darwin':
+            return self._run_command_on_unix(chromebrowser_path)
+        return ''
+
+    def _run_command_on_windows(self, chromebrowser_path: str) -> str:
+        """Runs the command on Windows"""
+        for command in chromebrowser_path:
+            with subprocess.Popen(command, stdout=subprocess.PIPE) as process:
+                output = process.communicate()[0].decode('UTF-8')
+            if 'invalid' not in output.lower():
+                return output
+        return ''
+
+    def _run_command_on_unix(self, chromebrowser_path: str) -> str:
+        """Runs the command on Unix-based systems"""
+        for path in chromebrowser_path:
+            with subprocess.Popen([path, '--version'], stdout=subprocess.PIPE) as process:
+                return process.communicate()[0].decode('UTF-8')
+
+    def _extract_browser_version(self, browser_version_terminal: str) -> str:
+        """Extracts the browser version from terminal output"""
+        find_string = re.findall(self.setting["Program"]["wedriverVersionPattern"], browser_version_terminal)
+        return find_string[0] if find_string else ''
 
     def _get_latest_version_chrome_browser(self, no_messages : bool = False) -> str:
         """Gets latest chrome browser version

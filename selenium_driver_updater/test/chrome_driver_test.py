@@ -59,8 +59,7 @@ def test_download_driver_failure(chrome_driver_setup):
     """Test downloading driver with failure."""
     _, chrome_driver_failure = chrome_driver_setup
     with pytest.raises(DriverVersionInvalidException):
-        file_name = chrome_driver_failure._download_driver(version='blablablanotversion')
-        assert len(file_name) == 0
+        chrome_driver_failure._download_driver(version='blablablanotversion')
 
 def test_compare_current_version_and_latest_version_failure(chrome_driver_setup):
     """Test comparing current and latest versions with failure."""
@@ -74,8 +73,7 @@ def test_chromedriver_is_up_to_date_failure(chrome_driver_setup):
     """Test if ChromeDriver is up to date with failure."""
     _, chrome_driver_failure = chrome_driver_setup
     with pytest.raises(DriverVersionInvalidException):
-        filename = chrome_driver_failure.main()
-        assert len(filename) == 0
+        chrome_driver_failure.main()
 
 def test_if_version_is_valid_failure(chrome_driver_setup):
     """Test if a specific version is valid with failure."""
@@ -85,7 +83,7 @@ def test_if_version_is_valid_failure(chrome_driver_setup):
 
 def test_get_result_by_request(chrome_driver_setup):
     """Test getting the result by request."""
-    chrome_driver, _ = chrome_driver_setup
+    _, _ = chrome_driver_setup
     url = str(setting["ChromeDriver"]["LinkLastRelease"])
     json_data = RequestsGetter.get_result_by_request(url=url)
     assert len(json_data) > 0

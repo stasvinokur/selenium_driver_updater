@@ -26,7 +26,7 @@ def test_get_result_by_request(setup_operabrowser):
     """Test to check if the request getter works."""
     url = str(setting["OperaBrowser"]["LinkAllLatestRelease"])
     json_data = RequestsGetter.get_result_by_request(url=url)
-    assert len(json_data) >= 0
+    assert len(json_data) > 0
 
 
 def test_get_latest_version_opera_browser(setup_operabrowser):
@@ -35,23 +35,9 @@ def test_get_latest_version_opera_browser(setup_operabrowser):
     assert latest_version is not None
     assert len(latest_version) > 0
 
-
-def test_get_latest_opera_browser_for_current_os(setup_operabrowser):
-    """Test to ensure the latest Opera browser is fetched for the current OS."""
-    setup_operabrowser._get_latest_opera_browser_for_current_os()
-
-
-def test_compare_current_version_and_latest_version_opera_browser(setup_operabrowser):
+def test_compare_opera_browser_versions(setup_operabrowser):
     """Test to compare the current version of Opera browser with the latest version."""
-    is_browser_is_up_to_date, current_version, latest_version = setup_operabrowser._compare_current_version_and_latest_version_opera_browser()
-
-    assert is_browser_is_up_to_date is not None
-    assert current_version is not None
-    assert latest_version is not None
-
-    assert is_browser_is_up_to_date in [True, False]
-    assert len(current_version) > 0
-    assert len(latest_version) > 0
+    setup_operabrowser._compare_opera_browser_versions()
 
 
 def test_check_operadriver_is_up_to_date(setup_operabrowser):

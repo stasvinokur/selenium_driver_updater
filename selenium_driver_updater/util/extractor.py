@@ -133,24 +133,6 @@ class Extractor():
             shutil.rmtree(driver_folder_path)
 
     @staticmethod
-    def extract_all_tar_xz_archive(archive_path: str,
-                                    out_path: str, delete_archive: bool = True) -> None:
-        """Extract all members in specific tar.xz archive
-
-        Args:
-            archive_path (str)      : Path to specific archive.
-            out_path (str)          : Out path, where all members of archive will be gathered.
-            delete_archive (bool)   : Delete archive after unzip or not. Defaults to True.
-
-        """
-
-        with tarfile.open(archive_path, "r:xz") as tar_ref:
-            Extractor._safe_extract(tar_ref, out_path)
-
-        if Path(archive_path).exists() and delete_archive:
-            Path(archive_path).unlink()
-
-    @staticmethod
     def extract_and_detect_archive_format(
         archive_path: str,
         out_path: str, delete_archive: bool = True

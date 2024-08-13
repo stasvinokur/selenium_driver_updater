@@ -28,9 +28,9 @@ def test_get_latest_version_edge_browser(edge_browser_setup, ):
     assert latest_version is not None
     assert len(latest_version) > 0
 
-def test_compare_current_version_and_latest_version_edge_browser(edge_browser_setup, ):
+def test_compare_edge_browser_versions(edge_browser_setup, ):
     """Test to compare the current version and latest version of Edge browser."""
-    edge_browser_setup._compare_current_version_and_latest_version_edge_browser()
+    edge_browser_setup._compare_edge_browser_versions()
 
 def test_if_edgebrowser_is_up_to_date(edge_browser_setup, ):
     """Test to check if Edge browser is up to date."""

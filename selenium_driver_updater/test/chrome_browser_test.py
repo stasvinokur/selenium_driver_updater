@@ -34,9 +34,9 @@ def test_get_latest_version_chrome_browser(chrome_browser_setup, ):
     assert latest_version is not None
     assert len(latest_version) > 0
 
-def test_compare_current_version_and_latest_version_chrome_browser(chrome_browser_setup, ):
+def test_compare_chrome_browser_versions(chrome_browser_setup, ):
     """Test to compare the current version and latest version of Chrome browser."""
-    chrome_browser_setup._compare_current_version_and_latest_version_chrome_browser()
+    chrome_browser_setup._compare_chrome_browser_versions()
 
 def test_chromedriver_is_up_to_date(chrome_browser_setup, ):
     """Test to check if ChromeDriver is up to date."""

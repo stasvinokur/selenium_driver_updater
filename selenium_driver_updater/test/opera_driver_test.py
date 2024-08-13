@@ -42,31 +42,25 @@ def setup_operadriver():
 def test_get_current_version_operadriver_selenium_failure(setup_operadriver):
     _, operadriver_failure = setup_operadriver
     with pytest.raises(DriverVersionInvalidException):
-        current_version = operadriver_failure._get_current_version_driver()
-        assert len(current_version) == 0
+        operadriver_failure._get_current_version_driver()
 
 
 def test_download_driver_failure(setup_operadriver):
     _, operadriver_failure = setup_operadriver
     with pytest.raises(DriverVersionInvalidException):
-        file_name = operadriver_failure._download_driver(version="blablablanotversion")
-        assert len(file_name) == 0
+        operadriver_failure._download_driver(version="blablablanotversion")
 
 
 def test_compare_current_version_and_latest_version_failure(setup_operadriver):
     _, operadriver_failure = setup_operadriver
     with pytest.raises(DriverVersionInvalidException):
-        is_driver_is_up_to_date, current_version, latest_version = operadriver_failure._compare_current_version_and_latest_version_github()
-        assert not is_driver_is_up_to_date
-        assert len(current_version) == 0
-        assert len(latest_version) == 0
+        operadriver_failure._compare_current_version_and_latest_version_github()
 
 
 def test_check_if_operadriver_is_up_to_date_failure(setup_operadriver):
     _, operadriver_failure = setup_operadriver
     with pytest.raises(DriverVersionInvalidException):
-        filename = operadriver_failure.main()
-        assert len(filename) == 0
+        operadriver_failure.main()
 
 
 def test_check_if_version_is_valid_failure(setup_operadriver):

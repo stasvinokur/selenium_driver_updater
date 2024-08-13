@@ -29,21 +29,8 @@ def test_check_get_latest_version_firefox_browser(setup_firefoxbrowser):
     assert len(latest_version) > 0
 
 
-def test_check_get_latest_firefox_browser_for_current_os(setup_firefoxbrowser):
-    # Test the function without any assert since it's more about side effects
-    setup_firefoxbrowser._get_latest_firefox_browser_for_current_os()
-
-
-def test_compare_current_version_and_latest_version_firefox_browser(setup_firefoxbrowser):
-    is_browser_is_up_to_date, current_version, latest_version = setup_firefoxbrowser._compare_current_version_and_latest_version_firefox_browser()
-
-    assert is_browser_is_up_to_date is not None
-    assert current_version is not None
-    assert latest_version is not None
-
-    assert is_browser_is_up_to_date in [True, False]
-    assert len(current_version) > 0
-    assert len(latest_version) > 0
+def test_compare_firefox_browser_versions(setup_firefoxbrowser):
+    setup_firefoxbrowser._compare_firefox_browser_versions()
 
 
 def test_check_geckodriver_is_up_to_date(setup_firefoxbrowser):
