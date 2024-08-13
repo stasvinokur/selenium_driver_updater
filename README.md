@@ -85,7 +85,7 @@ All supported OS for this driver are:
 - Windows
 - Linux
 - MacOS
-- MacOS with M1
+- MacOS on M-based processors
 
 ### ``Geckodriver`` 
 #### ``DriverUpdater.geckodriver``
@@ -99,7 +99,7 @@ All supported OS's for this driver are:
 - Linux
 - Linux ARM
 - MacOS
-- MacOS with M1
+- MacOS on M-based processors
 
 ### ``Operadriver`` 
 #### ``DriverUpdater.operadriver``
@@ -122,7 +122,7 @@ All supported OS's for this driver are:
 - Windows
 - Windows ARM
 - MacOS
-- MacOS with M1
+- MacOS on M-based processors
 - Linux
 
 ### ``SafariDriver`` 
