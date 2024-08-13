@@ -31,6 +31,7 @@ jobs:
       # Run tests and generate coverage report
       - name: Run tests
         run: |
+          cd selenium_driver_updater/
           pytest --cov=. --cov-report=xml
 
       # Upload coverage report
