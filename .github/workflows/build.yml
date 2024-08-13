@@ -31,7 +31,6 @@ jobs:
       # Run tests and generate coverage report
       - name: Run tests
         run: |
-          cd selenium_driver_updater/
           pytest --cov=. --cov-report=xml
 
       # Upload coverage report
@@ -39,7 +38,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report
-          path: selenium_driver_updater/coverage.xml
+          path: coverage.xml
 
       # Run SonarQube scan
       - uses: sonarsource/sonarqube-scan-action@master
