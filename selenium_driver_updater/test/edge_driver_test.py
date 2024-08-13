@@ -55,9 +55,10 @@ def test_check_download_driver_failure(setup_edgedriver):
 
 def test_compare_current_version_and_latest_version_failure(setup_edgedriver):
     _, edgedriver_failure, _ = setup_edgedriver
-    with pytest.raises(DriverVersionInvalidException):
-        edgedriver_failure._compare_current_version_and_latest_version()
-
+    is_driver_up_to_date, current_version, latest_version = edgedriver_failure._compare_current_version_and_latest_version()
+    assert not is_driver_up_to_date
+    assert len(current_version) == 0
+    assert len(latest_version) == 0
 
 def test_check_if_edgedriver_is_up_to_date_failure(setup_edgedriver):
     _, edgedriver_failure, _ = setup_edgedriver
