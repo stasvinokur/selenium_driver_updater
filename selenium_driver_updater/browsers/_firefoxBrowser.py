@@ -13,6 +13,7 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.common.exceptions import SessionNotCreatedException
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.firefox.service import Service
 
 # Local imports
 from selenium_driver_updater._setting import setting
@@ -74,7 +75,9 @@ class FirefoxBrowser():
                 options = FirefoxOptions()
                 options.add_argument("--headless")
 
-                with webdriver.Firefox(executable_path = self.geckodriver_path, options=options) as driver:
+                service = Service(self.geckodriver_path)
+
+                with webdriver.Firefox(service=service, options=options) as driver:
                     browser_version = str(driver.capabilities['browserVersion'])
 
             logger.info(f'Current version of firefox browser: {browser_version}')

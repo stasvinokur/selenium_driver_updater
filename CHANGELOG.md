@@ -19,6 +19,7 @@ This version was written and tested on Python 3.11.1
 
 - Fixed an issue with incorrect extracting of tar.gz archives when specific filename is present
 - Fixed an issue with incorrect extracting of chromedriver with third_party_notice file
+- Fixed an issues with browsers versions checking
 
 #### Removed
 

@@ -9,6 +9,7 @@ import platform
 from selenium import webdriver
 from selenium.common.exceptions import SessionNotCreatedException
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.edge.service import Service
 
 # Local imports
 from selenium_driver_updater._setting import setting
@@ -62,7 +63,9 @@ class EdgeBrowser():
 
                 desired_cap = {}
 
-                with webdriver.Edge(executable_path = self.edgedriver_path, capabilities=desired_cap) as driver:
+                service = Service(self.edgedriver_path)
+
+                with webdriver.Edge(service=service, capabilities=desired_cap) as driver:
                     browser_version = str(driver.capabilities['browserVersion'])
 
             logger.info(f'Current version of edge browser: {browser_version}')

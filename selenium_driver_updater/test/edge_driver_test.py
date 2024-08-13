@@ -84,7 +84,7 @@ def test_check_download_driver_specific_version(setup_edgedriver):
     edgedriver_path = edgedriver.driver_path
     assert not Path(edgedriver_path).exists()
 
-    specific_version = '90.0.818.49'
+    specific_version = '128.0.2739.22'
     file_name = edgedriver._download_driver(version=specific_version)
     assert file_name is not None
     assert len(file_name) > 0
@@ -163,7 +163,7 @@ def test_check_if_edgedriver_is_up_to_date(setup_edgedriver):
 
 def test_check_if_version_is_valid(setup_edgedriver):
     edgedriver, _, setting_local = setup_edgedriver
-    specific_version = '90.0.818.49'
+    specific_version = '128.0.2739.22'
     url = str(setting_local["EdgeDriver"]["LinkLastReleaseFile"]).format(specific_version)
 
     if 'mac64_m1' in url:

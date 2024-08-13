@@ -6,9 +6,7 @@
 [![Downloads](https://static.pepy.tech/badge/selenium-driver-updater/month)](https://pepy.tech/project/selenium-driver-updater)
 [![Downloads](https://static.pepy.tech/badge/selenium-driver-updater/week)](https://pepy.tech/project/selenium-driver-updater)
 
-[![Windows](https://github.com/Svinokur/selenium_driver_updater/actions/workflows/windows-tests.yml/badge.svg)](https://github.com/Svinokur/selenium_driver_updater/actions/workflows/windows-tests.yml)
-[![macOS](https://github.com/Svinokur/selenium_driver_updater/actions/workflows/macOS-tests.yml/badge.svg)](https://github.com/Svinokur/selenium_driver_updater/actions/workflows/macOS-tests.yml)
-[![Ubuntu](https://github.com/Svinokur/selenium_driver_updater/actions/workflows/ubuntu-tests.yml/badge.svg)](https://github.com/Svinokur/selenium_driver_updater/actions/workflows/ubuntu-tests.yml)
+[![Build](https://github.com/Svinokur/selenium_driver_updater/actions/workflows/build.yml/badge.svg)](https://github.com/Svinokur/selenium_driver_updater/actions/workflows/build.yml)
 
 It is a fast and convenience package that can automatically download or update Selenium webdriver binaries and their browsers for different OS.
 
