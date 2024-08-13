@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import SessionNotCreatedException
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.chrome.service import Service
 
 # Local imports
 from selenium_driver_updater._setting import setting
@@ -67,7 +68,8 @@ class OperaBrowser():
 
             if Path(self.operadriver_path).exists() and not browser_version:
 
-                with webdriver.Opera(executable_path = self.operadriver_path) as driver:
+                service = Service(self.operadriver_path)
+                with webdriver.Chrome(service=service) as driver:
                     browser_version = driver.execute_script("return navigator.userAgent")
 
                 find_string = re.findall('OPR/' + self.setting["Program"]["wedriverVersionPattern"], browser_version)

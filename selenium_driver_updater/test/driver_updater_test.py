@@ -26,10 +26,19 @@ def setup_info():
     yield _info
 
 def test_check_all_input_parameteres_failure(driver_updater_setup, setup_info):
+    # Set incorrect values in the _info object to simulate failure
+    setup_info.driver_name = 123  # Invalid type, should be str or list
+    setup_info.filename = 67890  # Invalid type, should be str
+    setup_info.system_name = 'invalid_system_name'  # Invalid system name
+
     with pytest.raises(ValueError):
         driver_updater_setup._DriverUpdater__check_all_input_parameteres()
 
 def test_check_enviroment_and_variables_failure(driver_updater_setup, setup_info):
+    # Set incorrect values in the _info object to simulate failure
+    setup_info.driver_name = 123  # Invalid type, should be str or list
+    setup_info.filename = 67890  # Invalid type, should be str
+    setup_info.system_name = 'invalid_system_name'  # Invalid system name
     with pytest.raises(ValueError):
         driver_updater_setup._DriverUpdater__check_enviroment_and_variables()
 
@@ -72,6 +81,13 @@ def test_install_driver(driver_updater_setup, setup_info):
 
 def test_install_multiple_drivers(driver_updater_setup, setup_info):
     driver_names = ['chromedriver', 'geckodriver']
-    driver_paths = driver_updater_setup.install(driver_names, path=base_dir, system_name=['linux64', 'linux64'])
+    driver_paths = driver_updater_setup.install(driver_names, path=base_dir)
+    
     assert isinstance(driver_paths, list)
     assert all(isinstance(path, str) for path in driver_paths)
+
+    # Cleanup: Delete the downloaded drivers
+    for driver_path in driver_paths:
+        if os.path.exists(driver_path):
+            os.remove(driver_path)
+            assert not os.path.exists(driver_path)  # Ensure the file was deleted
