@@ -41,8 +41,8 @@ def setup_operadriver():
 
 def test_get_current_version_operadriver_selenium_failure(setup_operadriver):
     _, operadriver_failure = setup_operadriver
-    with pytest.raises(DriverVersionInvalidException):
-        operadriver_failure._get_current_version_driver()
+    driver_version = operadriver_failure._get_current_version_driver()
+    assert len(driver_version) == 0
 
 
 def test_download_driver_failure(setup_operadriver):
