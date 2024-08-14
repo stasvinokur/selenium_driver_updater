@@ -29,7 +29,8 @@ class ChromeDriver(DriverBase):
         specific_system = specific_system.replace('mac64_m1', 'mac-arm64')
         specific_system = specific_system.replace('mac64', 'mac-x64')
         if specific_system:
-            self.system_name = f"chromedriver_{specific_system}.zip"
+            self.system_name = f"chromedriver-{specific_system}.zip"
+            self.specific_system = specific_system
 
         self.chromedriver_path = self.driver_path
 
@@ -70,39 +71,32 @@ class ChromeDriver(DriverBase):
                 driver_path = self._download_driver(previous_version=True)
 
         else:
-            
-            try:
-                if version.parse(self.version) < version.parse('115'):
-                    message = 'Versions below 115 are not supported - aborting operation'
-                    logger.error(message)
-                    raise DriverVersionInvalidException(message)
-            except Exception:
-                raise DriverVersionInvalidException('Invalid version was provided, please check it')
 
             driver_path = self._download_driver(version=self.version)
 
         return driver_path
     
-    def _get_latest_version_driver(self, no_messages : bool = False) -> str:
-        """Gets latest driver version
+    def _get_latest_version_driver(self, no_messages: bool = False) -> str:
+        """Gets the latest driver version based on the specified channel.
 
         Returns:
-            str
-
-            latest_version (str)  : Latest version of specific driver.
-
+            str: Latest version of the specific driver.
         """
 
-        latest_version : str = ''
+        latest_version: str = ''
 
-        url = self.setting[self.driver_name_setting]["LinkLastRelease"]
+        channel_suffix = self.version.split('_')[1] if '_' in self.version else 'stable'
+
+        channel = channel_suffix.capitalize()  # 'Beta', 'Dev', 'Canary'
+
+        url = self.setting["ChromeDriver"]["LinkLastRelease"]
+
         json_data = self.requests_getter.get_result_by_request(url=url, is_json=True)
 
-        latest_version = json_data.get('channels').get('Stable').get('version')
+        latest_version = json_data.get('channels', {}).get(channel, {}).get('version', '')
 
         if not no_messages:
-
-            logger.info(f'Latest version of {self.driver_name}: {latest_version}')
+            logger.info(f'Latest version of chromedriver {self.version}: {latest_version}')
 
         return latest_version
 
@@ -203,12 +197,7 @@ class ChromeDriver(DriverBase):
 
         super()._delete_current_driver_for_current_os()
 
-        if version:
-
-            url = self.setting["ChromeDriver"]["LinkLastReleaseFile"].format(version)
-            logger.info(f'Started download chromedriver specific_version: {version}')
-
-        elif previous_version:
+        if previous_version:
 
             latest_previous_version = self._get_latest_previous_version_chromedriver_via_requests()
 
@@ -220,24 +209,17 @@ class ChromeDriver(DriverBase):
             latest_version = self._get_latest_version_driver()
 
             url = self.setting["ChromeDriver"]["LinkLastReleaseFile"].format(latest_version)
-            logger.info(f'Started download chromedriver latest_version: {latest_version}')
+            channel = 'stable' if '_' not in self.version else self.version.split('_')[1]
+            logger.info(f'Started download chromedriver {channel} latest_version: {latest_version}')
 
         if self.system_name:
-            url = url.replace(url.split("/")[-1], '')
-            url = url + self.system_name
-
+            url = url.replace(url.split("/")[-1], self.system_name)
+            url = url.replace(url.split("/")[-2], self.specific_system)
+            
             logger.info(f'Started downloading chromedriver for specific system: {self.system_name}')
 
         if any([version, self.system_name ,latest_previous_version]):
-            if 'mac_arm64' in url:
-                try:
-                    super()._check_if_version_is_valid(url=url)
-                except Exception:
-                    logger.warning('Could not find binary with mac_arm64 name, trying to check version using different name')
-                    url = url.replace('mac_arm64', 'mac64_m1')
-                    super()._check_if_version_is_valid(url=url)
-            else:
-                super()._check_if_version_is_valid(url=url)
+            super()._check_if_version_is_valid(url=url)
 
         archive_name = url.split("/")[-1]
         out_path = self.path + archive_name

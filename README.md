@@ -19,7 +19,19 @@ pip install selenium-driver-updater
 ```
 
 ## Usage in code
-This example shows how you can use this library to download chromedriver binary and use it immediately.
+This example shows how you can use this library to download chromedriver binary and use it immediately. The chromedriver will be downloaded to base directory.
+```python
+from selenium_driver_updater import DriverUpdater
+from selenium import webdriver
+
+filename = DriverUpdater.install(DriverUpdater.chromedriver)
+
+driver = webdriver.Chrome(filename)
+driver.get('https://google.com')
+
+```
+
+Or you can specify a path where you want to download a chromedriver to
 ```python
 from selenium_driver_updater import DriverUpdater
 from selenium import webdriver
@@ -27,14 +39,26 @@ import os
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-filename = DriverUpdater.install(path=base_dir, driver_name=DriverUpdater.chromedriver, upgrade=True, check_driver_is_up_to_date=True)
+filename = DriverUpdater.install(path=base_dir, driver_name=DriverUpdater.chromedriver)
 
 driver = webdriver.Chrome(filename)
 driver.get('https://google.com')
 
 ```
 
-Or you can use library to download and update chromedriver and geckodriver binaries at the same time.
+You can also specify the version type (beta, dev, canary) you want to download.
+```python
+from selenium_driver_updater import DriverUpdater
+from selenium import webdriver
+
+filename = DriverUpdater.install(driver_name=DriverUpdater.chromedriver, version=DriverUpdater.chromedriver_beta)
+
+driver = webdriver.Chrome(filename)
+driver.get('https://google.com')
+
+```
+
+You can also use library to download and update chromedriver and geckodriver binaries at the same time.
 ```python
 from selenium_driver_updater import DriverUpdater
 from selenium import webdriver
@@ -43,7 +67,7 @@ import os
 base_dir = os.path.dirname(os.path.abspath(__file__))
 list_drivers = [DriverUpdater.chromedriver, DriverUpdater.geckodriver]
 
-filenames = DriverUpdater.install(path=base_dir, driver_name=list_drivers, upgrade=True, check_driver_is_up_to_date=True)
+filenames = DriverUpdater.install(path=base_dir, driver_name=list_drivers)
 print(filenames)
 
 driver_chrome = webdriver.Chrome(filename[0])
@@ -61,6 +85,12 @@ selenium-driver-updater --help
 ```
 To see all available arguments and commands
 
+Or you can use alias
+```bash
+selupd --help
+```
+for easier use
+
 This example shows how you can use this console updater to download chromedriver to current dir 
 ```bash
 selenium-driver-updater -d chromedriver
@@ -76,7 +106,7 @@ selenium-driver-updater -d chromedriver,geckodriver
 ### ``Chromedriver`` 
 #### ``DriverUpdater.chromedriver``
 
-For installing or updating [chromedriver binary](https://chromedriver.chromium.org)
+For installing or updating [chromedriver binary](https://developer.chrome.com/docs/chromedriver/)
 
 All supported OS for this driver are:
 

@@ -40,9 +40,18 @@ class DriverUpdater():
 
     #DRIVERS
     chromedriver = 'chromedriver'
+    chromedriver_beta = 'chromedriver_beta'
+    chromedriver_dev = 'chromedriver_dev'
+    chromedriver_canary = 'chromedriver_canary'
+
     geckodriver = 'geckodriver'
     operadriver = 'operadriver'
+
     edgedriver = 'edgedriver'
+    edgedriver_beta = 'edgedriver_beta'
+    edgedriver_dev = 'edgedriver_dev'
+    edgedriver_canary = 'edgedriver_canary'
+
     safaridriver = 'safaridriver'
 
     #OS'S
@@ -68,7 +77,7 @@ class DriverUpdater():
             path (str)                          : Specified path which will used for downloading or updating Selenium driver binary. Must be folder path.
             info_messages (bool)                : If false, it will disable all info messages. Defaults to True.
             filename (str)                      : Specific name for driver. If given, it will replace current name for driver. Defaults to empty string.
-            version (str)                       : Specific version for driver. If given, it will downloads given version. Defaults to empty string.
+            version (str)                       : Specific channel version for driver (beta, dev, canary). If given, it will download given channel latest version. Defaults to empty string.
             check_browser (bool)                : If true, it will check browser version before specific driver update or upgrade. Defaults to False.
             enable_library_update_check (bool)  : If true, it will enable checking for library update while starting. Defaults to True.
             system_name (Union[str, list[str]]) : Specific OS for driver. Defaults to empty string.
@@ -219,8 +228,18 @@ class DriverUpdater():
 
     @staticmethod
     def __check_version_type() -> None:
-        if _info.version:
-            DriverUpdater.__check_parameter_type_is_valid(_info.version, type(_info.driver_name), 'version')
+        valid_versions = {
+            'chromedriver_beta', 
+            'chromedriver_dev', 
+            'chromedriver_canary',
+            'edgedriver_beta', 
+            'edgedriver_dev', 
+            'edgedriver_canary'
+        }
+
+        if _info.version and _info.version not in valid_versions:
+            message = f"Invalid version specified: {_info.version}. Must be one of {', '.join(valid_versions)}."
+            raise ValueError(message)
 
     @staticmethod
     def __validate_system_names() -> None:

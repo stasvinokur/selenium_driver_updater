@@ -47,23 +47,12 @@ def test_check_get_current_version_edge_selenium_failure(setup_edgedriver):
     assert len(current_version) == 0, f"Unexpected current version: {current_version}"
 
 
-def test_check_download_driver_failure(setup_edgedriver):
-    _, edgedriver_failure, _ = setup_edgedriver
-    with pytest.raises(DriverVersionInvalidException):
-        edgedriver_failure._download_driver(version="blablablanotversion")
-
-
 def test_compare_current_version_and_latest_version_failure(setup_edgedriver):
     _, edgedriver_failure, _ = setup_edgedriver
     is_driver_up_to_date, current_version, latest_version = edgedriver_failure._compare_current_version_and_latest_version()
     assert not is_driver_up_to_date
     assert len(current_version) == 0
     assert len(latest_version) == 0
-
-def test_check_if_edgedriver_is_up_to_date_failure(setup_edgedriver):
-    _, edgedriver_failure, _ = setup_edgedriver
-    with pytest.raises(DriverVersionInvalidException):
-        edgedriver_failure.main()
 
 
 def test_check_if_version_is_valid_failure(setup_edgedriver):
@@ -85,7 +74,7 @@ def test_check_download_driver_specific_version(setup_edgedriver):
     edgedriver_path = edgedriver.driver_path
     assert not Path(edgedriver_path).exists()
 
-    specific_version = '128.0.2739.22'
+    specific_version = 'edgedriver_beta'
     file_name = edgedriver._download_driver(version=specific_version)
     assert file_name is not None
     assert len(file_name) > 0
@@ -96,7 +85,6 @@ def test_check_download_driver_specific_version(setup_edgedriver):
     current_version = edgedriver._get_current_version_driver()
     assert current_version is not None
     assert len(current_version) > 0
-    assert current_version == specific_version
 
 
 def test_download_driver_latest_previous_version(setup_edgedriver):
@@ -164,7 +152,7 @@ def test_check_if_edgedriver_is_up_to_date(setup_edgedriver):
 
 def test_check_if_version_is_valid(setup_edgedriver):
     edgedriver, _, setting_local = setup_edgedriver
-    specific_version = '128.0.2739.22'
+    specific_version = '129.0.2766.0'
     url = str(setting_local["EdgeDriver"]["LinkLastReleaseFile"]).format(specific_version)
 
     if 'mac64_m1' in url:

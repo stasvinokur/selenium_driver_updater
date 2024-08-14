@@ -145,12 +145,7 @@ class EdgeDriver(DriverBase):
 
         super()._delete_current_driver_for_current_os()
 
-        if version:
-
-            url = str(self.setting["EdgeDriver"]["LinkLastReleaseFile"]).format(version)
-            logger.info(f'Started download edgedriver specific_version: {version}')
-
-        elif previous_version:
+        if previous_version:
 
             latest_previous_version = self._get_latest_previous_version_edgedriver_via_requests()
 
@@ -158,11 +153,15 @@ class EdgeDriver(DriverBase):
             logger.info(f'Started download edgedriver latest_previous_version: {latest_previous_version}')
 
         else:
+            
+            if self.version:
+                self.setting["EdgeDriver"]["LinkLastRelease"] = self.setting["EdgeDriver"]["LinkLastRelease"].replace('STABLE', self.version.split('_')[1].upper())
 
             latest_version = super()._get_latest_version_driver()
 
             url = str(self.setting["EdgeDriver"]["LinkLastReleaseFile"]).format(latest_version)
-            logger.info(f'Started download edgedriver latest_version: {latest_version}')
+            channel = '' if '_' not in self.version else self.version.split('_')[1]
+            logger.info(f'Started download edgedriver {channel} latest_version: {latest_version}')
 
         if self.system_name:
             url = url.replace(url.split("/")[-1], '')

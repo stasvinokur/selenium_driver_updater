@@ -55,12 +55,6 @@ def test_get_current_version_chrome_selenium_failure(chrome_driver_setup):
     current_version = chrome_driver_failure._get_current_version_driver()
     assert len(current_version) == 0
 
-def test_download_driver_failure(chrome_driver_setup):
-    """Test downloading driver with failure."""
-    _, chrome_driver_failure = chrome_driver_setup
-    with pytest.raises(DriverVersionInvalidException):
-        chrome_driver_failure._download_driver(version='blablablanotversion')
-
 def test_compare_current_version_and_latest_version_failure(chrome_driver_setup):
     """Test comparing current and latest versions with failure."""
     _, chrome_driver_failure = chrome_driver_setup
@@ -68,12 +62,6 @@ def test_compare_current_version_and_latest_version_failure(chrome_driver_setup)
     assert not is_driver_is_up_to_date
     assert len(current_version) == 0
     assert len(latest_version) == 0
-
-def test_chromedriver_is_up_to_date_failure(chrome_driver_setup):
-    """Test if ChromeDriver is up to date with failure."""
-    _, chrome_driver_failure = chrome_driver_setup
-    with pytest.raises(DriverVersionInvalidException):
-        chrome_driver_failure.main()
 
 def test_if_version_is_valid_failure(chrome_driver_setup):
     """Test if a specific version is valid with failure."""
@@ -107,7 +95,7 @@ def test_download_driver_specific_version(setup_paths):
     chrome_driver._delete_current_driver_for_current_os()
     assert not Path(chromedriver_path).exists()
 
-    file_name = chrome_driver._download_driver(version='115.0.5763.0')
+    file_name = chrome_driver._download_driver(version='chromedriver_beta')
     assert file_name is not None
     assert len(file_name) > 0
     assert Path(chromedriver_path).exists()
@@ -117,7 +105,6 @@ def test_download_driver_specific_version(setup_paths):
     current_version = chrome_driver._get_current_version_driver()
     assert current_version is not None
     assert len(current_version) > 0
-    assert current_version == '115.0.5763.0'
 
 def test_download_driver_latest_previous_version(setup_paths):
     """Test downloading the latest previous version of ChromeDriver."""

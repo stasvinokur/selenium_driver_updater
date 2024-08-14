@@ -1,4 +1,4 @@
-## [7.0.0] - xx/08/2024
+## [7.0.0] - 14/08/2024
 This version was written and tested on Python 3.11.1
 
 #### Added
@@ -6,6 +6,11 @@ This version was written and tested on Python 3.11.1
 - Added new command assosiation "selupd" for easier use
 - Added automatic pypi release
 - Added deleting of .tmp files when downloading is manually stopped (KeyboardInterrupt)
+- Added driver-version argument to command line
+
+#### Reworked
+
+- Reworked the version parameter: It now accepts the channel version (beta, dev, canary) for chromedriver and edgedriver instead of a specific driver version.
 
 #### Improvements
 
@@ -20,6 +25,7 @@ This version was written and tested on Python 3.11.1
 - Fixed an issue with incorrect extracting of tar.gz archives when specific filename is present
 - Fixed an issue with incorrect extracting of chromedriver with third_party_notice file
 - Fixed an issues with browsers versions checking
+- Fixed issues with system_name not working
 
 #### Removed
 
