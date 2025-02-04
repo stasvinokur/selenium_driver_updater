@@ -32,11 +32,11 @@ packages = ['selenium_driver_updater',
 
 setup(
   name='selenium_driver_updater',
-  version='7.0.0',
+  version='7.0.1',
   description='Download or update your Selenium driver binaries and their browsers automatically with this package',
   long_description=long_description,
   long_description_content_type='text/markdown',
-  url='https://github.com/Svinokur/selenium_driver_updater',
+  url='https://github.com/stasvinokur/selenium_driver_updater',
   author='Stanislav Vinokur',
   author_email='stasvinokur@yahoo.com',
   license='MIT',

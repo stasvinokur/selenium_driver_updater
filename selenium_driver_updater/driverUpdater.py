@@ -300,7 +300,7 @@ class DriverUpdater():
             message = 'Note that beta version does not guarantee errors avoiding. If something goes wrong - please create an issue on github repository'
             logger.info(message)
 
-            message = 'Github repository link: https://github.com/Svinokur/selenium_driver_updater'
+            message = 'Github repository link: https://github.com/stasvinokur/selenium_driver_updater'
             logger.info(message)
 
     @staticmethod

@@ -1,3 +1,10 @@
+## [7.0.1] - 04/02/2025
+This version was written and tested on Python 3.13.1
+
+#### Fixes
+
+- Minor fixes
+
 ## [7.0.0] - 14/08/2024
 This version was written and tested on Python 3.11.1
 

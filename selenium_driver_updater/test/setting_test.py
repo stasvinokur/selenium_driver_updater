@@ -106,7 +106,7 @@ def test_check_count_params(settings):
     assert len(settings["PyPi"]) == 1
 
 def test_check_values_params(settings):
-    assert settings["Program"]["version"] == "7.0.0"
+    assert settings["Program"]["version"] == "7.0.1"
     assert settings["Program"]["wedriverVersionPattern"] == r'([0-9.]*\.[0-9]+)'
     assert settings["Program"]["driversPath"] == base_dir + 'test' + os.path.sep + 'drivers' + os.path.sep
     file_format = ".exe" if platform.system() == 'Windows' else ''
